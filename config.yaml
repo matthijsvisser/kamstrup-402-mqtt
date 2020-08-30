@@ -1,0 +1,15 @@
+mqtt:
+    host: 10.0.0.210
+    port: 1883
+    client: kamstrup
+    topic: kamstrup
+    # db: write-math
+serial_device:
+    com_port: /dev/ttyUSB1
+kamstrup:
+    parameters:
+    - Heat Energy
+    - Volume
+    - Temp1
+    - Temp2
+    poll_interval: 1
