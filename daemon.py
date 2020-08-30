@@ -61,14 +61,11 @@ class KamstrupDaemon(multiprocessing.Process):
 		while self.running:
 			values = self.heat_meter.run()
 
-			print(values)
 			for value in values:
 				self.mqtt_handler.publish(value, str(values[value]))
-				# self.mqtt_handler.publish(self.mqtt_handler.topic_prefix + "/" + value, values[value])
 			log.info("Waiting {} minute(s) for the next meter readout".format(self.poll_interval))
 			time.sleep(int(self.poll_interval) * 60)
 			
-
 def main():
 	daemon = KamstrupDaemon()
 	daemon.run()

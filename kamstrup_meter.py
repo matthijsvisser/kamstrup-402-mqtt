@@ -28,36 +28,36 @@ log.setLevel(logging.INFO)
 
 kamstrup_402_params = {
 	"Heat Energy"   : 0x3C,
-	"Power"         : 80,
+	"Power"         : 0x50,
 	"Temp1"         : 0x56,
 	"Temp2"         : 0x57,
-	"Tempdiff"      : 89,
-	"Flow"          : 74,
+	"Tempdiff"      : 0x59,
+	"Flow"          : 0x4A,
 	"Volume"        : 0x44,
-	"MinFlow_M"     : 141,
-	"MaxFlow_M"     : 139,
-	"MinFlowDate_M" : 140,
-	"MaxFlowDate_M" : 138,
-	"MinPower_M"    : 145,
-	"MaxPower_M"    : 143,
-	"AvgTemp1_M"    : 149,
-	"AvgTemp2_M"    : 150,
-	"MinPowerDate_M": 144,
-	"MaxPowerDate_M": 142,
-	"MinFlow_Y"     : 126,
-	"MaxFlow_Y"     : 124,
-	"MinFlowDate_Y" : 125,
-	"MaxFlowDate_Y" : 123,
-	"MinPower_Y"    : 130,
-	"MaxPower_Y"    : 128,
-	"AvgTemp1_Y"    : 146,
-	"AvgTemp2_Y"    : 147,
-	"MinPowerDate_Y": 129,
-	"MaxPowerDate_Y": 127,
-	"Temp1xm3"      : 97,
-	"Temp2xm3"      : 110,
-	"Infoevent"     : 113,
-	"HourCounter"   : 1004,
+	"MinFlow_M"     : 0x8D,
+	"MaxFlow_M"     : 0x8B,
+	"MinFlowDate_M" : 0x8C,
+	"MaxFlowDate_M" : 0x8A,
+	"MinPower_M"    : 0x91,
+	"MaxPower_M"    : 0x8F,
+	"AvgTemp1_M"    : 0x95,
+	"AvgTemp2_M"    : 0x96,
+	"MinPowerDate_M": 0x90,
+	"MaxPowerDate_M": 0x8E,
+	"MinFlow_Y"     : 0x7E,
+	"MaxFlow_Y"     : 0x7C,
+	"MinFlowDate_Y" : 0x7D,
+	"MaxFlowDate_Y" : 0x7B,
+	"MinPower_Y"    : 0x82,
+	"MaxPower_Y"    : 0x80,
+	"AvgTemp1_Y"    : 0x92,
+	"AvgTemp2_Y"    : 0x93,
+	"MinPowerDate_Y": 0x81,
+	"MaxPowerDate_Y": 0x7F,
+	"Temp1xm3"      : 0x61,
+	"Temp2xm3"      : 0x6E,
+	"Infoevent"     : 0x71,
+	"HourCounter"   : 0x3EC,
 }
 
 # Kamstrup uses the "true" CCITT CRC-16
@@ -66,11 +66,11 @@ def crc_1021(message):
 	reg = 0x0000
 	for byte in message:
 		mask = 0x80
-		while(mask > 0):
-			reg<<=1
+		while (mask > 0):
+			reg <<= 1
 			if byte & mask:
 				reg |= 1
-			mask>>=1
+			mask >>= 1
 			if reg & 0x10000:
 				reg &= 0xffff
 				reg ^= poly
@@ -108,13 +108,11 @@ class kamstrup(object):
 			self.close()
 
 		if self.open():
-
 			for parameter in self.parameters:
 				value = self.readparameter(int(str(kamstrup_402_params[parameter]), 0))
 				if value is not None:
 					values[parameter] = value
 			self.close()
-
 		return values
 
 	def open (self):
@@ -223,5 +221,4 @@ class kamstrup(object):
 		if receivedMessage[6] & 0x80:
 			i = -i
 		value *= i
-
 		return "{:.2f}".format(value)
