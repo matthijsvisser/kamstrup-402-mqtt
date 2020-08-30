@@ -3,7 +3,6 @@ mqtt:
     port: 1883
     client: kamstrup
     topic: kamstrup
-    # db: write-math
 serial_device:
     com_port: /dev/ttyUSB1
 kamstrup:
