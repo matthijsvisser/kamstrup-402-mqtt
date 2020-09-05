@@ -78,8 +78,9 @@ sudo service kamstrup_meter start
 ```
 
 ## Meter setup
-The infrared meter head is positioned as follows:
-![image](images/meter_setup.jpg)
+It can be hard to find the correct position of the meter head. It might differ if you are using an other model. I positioned the infrared head as follows:
+
+<img src="images/meter_setup.jpg" alt="drawing" width="200"/>
 
 ## Troubleshooting
 This section includes some tips to solve some issues.
