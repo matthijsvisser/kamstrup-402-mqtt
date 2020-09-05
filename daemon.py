@@ -60,10 +60,33 @@ class KamstrupDaemon(multiprocessing.Process):
 	def run(self):
 		while self.running:
 			values = self.heat_meter.run()
+			# values = {'2Energy': '112.162', '2Volume': '1685.249', '2Temp1': '57.030', '2Temp2': '33.890'}
+			# print(values)
+			# print(valuesx)
+			# print(values == valuesx)
+			# time.sleep(2)
 
-			for value in values:
-				self.mqtt_handler.publish(value, str(values[value]))
+
+			# self.mqtt_handler.publish('Energy', values['Energy'])
+			# self.mqtt_handler.publish('Volume', values['Volume'])
+			# self.mqtt_handler.publish('Temp1', values['Temp1'])
+			# self.mqtt_handler.publish('Temp2', values['Temp2'])
+			# for value in values.keys():
+			# 	self.mqtt_handler.publish(value, values[value])
+				# time.sleep(0.5)
+			# 	print(value)
+			# self.mqtt_handler.publish_multiple()
+			# values2 = {'2Energy': '112.162', '2Volume': '1685.249', '2Temp1': '57.030', '2Temp2': '33.890'}
+			
+			# for value in values2.keys():
+			# 	self.mqtt_handler.publish(value, values2[value])
+			self.mqtt_handler.publish("values", str(values).replace("'", "\""))
+			
 			log.info("Waiting {} minute(s) for the next meter readout".format(self.poll_interval))
+			# self.mqtt_handler.publish("adadf", "123")
+			# self.mqtt_handler.publish("aasdfadf", "11345145")
+			# self.mqtt_handler.publish("hfghf", "6256")
+			# self.mqtt_handler.publish("gfdgsd", "75555")
 			time.sleep(int(self.poll_interval) * 60)
 			
 def main():

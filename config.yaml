@@ -7,8 +7,8 @@ serial_device:
     com_port: /dev/ttyUSB1
 kamstrup:
     parameters:
-    - Heat Energy
-    - Volume
-    - Temp1
-    - Temp2
-    poll_interval: 30
+    - energy
+    - volume
+    - temp1
+    - temp2
+    poll_interval: 28

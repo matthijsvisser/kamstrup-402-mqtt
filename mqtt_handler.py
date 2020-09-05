@@ -7,13 +7,6 @@ from logging.handlers import TimedRotatingFileHandler
 log = logging.getLogger("log")
 log.setLevel(logging.INFO)
 
-# handler = TimedRotatingFileHandler('debug.log', when="d", interval=1, backupCount=5)
-
-# formatter = logging.Formatter("[%(asctime)s %(filename)s %(funcName)s:%(lineno)s - %(levelname)s - %(message)s]",
-# 							  "%Y-%m-%d %H:%M:%S")
-# handler.setFormatter(formatter)
-# log.addHandler(handler)
-
 class MqqtHandler (object):
     
 	def __init__(self, broker_ip, broker_port, client_id, topic_prefix, 
@@ -27,7 +20,7 @@ class MqqtHandler (object):
 		self.password = password
 	
 	def connect(self):
-		self.mqtt_client = paho.Client(self.client_id, False)
+		self.mqtt_client = paho.Client(self.client_id, True)
 
 		if self.authentication:
 			self.mqtt_client.username_pw_set(self.user, self.password)
@@ -42,10 +35,12 @@ class MqqtHandler (object):
 	def publish(self, topic, message):
 		full_topic = self.create_topic(topic.lower())
 		try:
-			self.mqtt_client.publish(full_topic, message)
-			log.info('Publishing \'{}\'\t{}\tto {}:{}'.format(full_topic, message,
+			log.info('Publishing \'{}\'\t\'{}\'\tto {}:{}'.format(full_topic, message,
 														   	self.broker, 
 															self.port))
+			mqtt_info = self.mqtt_client.publish(full_topic, message)
+			mqtt_info.wait_for_publish()
+
 		except ValueError as e:
 			logging.error('Value error: {}'.format(e))
 		except TypeError as e:

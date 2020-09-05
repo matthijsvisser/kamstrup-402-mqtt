@@ -1,0 +1,14 @@
+[Unit]
+Description=Kamstrup2mqtt Service
+After=multi-user.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/kamstrup
+ExecStart=/usr/bin/python3 /opt/kamstrup/daemon.py
+StandardOutput=null
+StandardError=journal
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
