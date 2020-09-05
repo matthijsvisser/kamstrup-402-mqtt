@@ -29,7 +29,7 @@ The library can be configured to fit your needs using the config.yaml file. The 
 | client | Client name to identify this MQTT client e.g. Kamstrup |
 | topic | MQTT topic where the values are published on |
 | com_port | port of serial communication device |
-| parameters | List of parameters that are read and published to the configured MQTT topic. See [Meter parameters](### Kamstrup meter parameters) table. |
+| parameters | List of parameters that are read and published to the configured MQTT topic. See [Meter parameters](###Kamstrup-meter-parameters) table. |
 | poll_interval | Meter readout interval in minutes |
 
 ### Kamstrup meter parameters
@@ -69,7 +69,24 @@ These parameters can be added to the config.yaml file. Atleast one parameter mus
 | hourcounter | |
 
 ## Running the script as a service with systemd
-Edit the kamstrup_meter.service file and adjust the path accordingly. The working directory in this example is /opt/kamstrup/. Check if the service has the required permissions after copying, if not, change it with chmod.
+Edit the kamstrup_meter.service file and adjust the path accordingly. The working directory in this example is /opt/kamstrup/.
+``` bash kamstrup_meter.service
+[Unit]
+Description=Kamstrup2mqtt Service
+After=multi-user.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/kamstrup
+ExecStart=/usr/bin/python3 /opt/kamstrup/daemon.py
+StandardOutput=null
+StandardError=journal
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+```
+Check if the service has the required permissions after copying, if not, change it with chmod and chown.
 ``` bash
 cp /opt/kamstrup/kamstrup_meter.service /etc/systemd/system/
 sudo systemctl daemon-reload
