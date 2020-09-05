@@ -1,11 +1,22 @@
 # Kamstrup multical 402 MQTT library
 This project provides a Python library that enables communication with the Kamstrup Multical 402 heat meter. The configured parameters will be read from the meter at a certain interval and published in MQTT messages.
 
+# Contents
+  * [Requirements](##Requirements)
+  * [Configuration file](##Configuration-file)
+    * [Kamstrup meter parameters](###Kamstrup-meter-parameters)
+  * [Running the script as a service with systemd](##Running-the-script-as-a-service-with-systemd)
+  * [Meter setup](Meter-setup)
+  * [Troubleshooting](##Troubleshooting)
+    * [Read the log file](###Read-the-log-file)
+    * [Reading values](###Reading-values)
+    * [Finding the correct com port](Finding-the-correct-com-port)
+
 ## Requirements
 * Python 3
-* [Pyserial](https://pypi.org/project/pyserial/)
-* [Paho MQTT](https://pypi.org/project/paho-mqtt/)
-* [Yaml](https://pypi.org/project/yaml-1.3/)
+  * [Pyserial](https://pypi.org/project/pyserial/)
+  * [Paho MQTT](https://pypi.org/project/paho-mqtt/)
+  * [Yaml](https://pypi.org/project/yaml-1.3/)
 * MQTT broker e.g.: [Mosquitto](https://mosquitto.org/)
 * Infrared read/write USB cable e.g.: [IR Schreib/Lesekopf USB (Optokopf)](https://shop.weidmann-elektronik.de/index.php?page=product&info=24)
 
