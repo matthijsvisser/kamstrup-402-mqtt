@@ -8,10 +8,7 @@
 # ----------------------------------------------------------------------------
 #
 # Modified by Frank Reijn and Paul Bonnemaijers for Kamstrup Multical 402
-#
-# Modified by Matthijs Visser 2020
-# * refactored code
-# * added mqtt support
+# Modified by Matthijs Visser, refactored and simplified code
 
 import serial
 import math
