@@ -5,7 +5,9 @@ This project provides a Python library that enables communication with the Kamst
   * [Requirements](#Requirements)
   * [Configuration file](#Configuration-file)
     * [Kamstrup meter parameters](#Kamstrup-meter-parameters)
-  * [Running the script as a service with systemd](#Running-the-script-as-a-service-with-systemd)
+  * [Running the script](#Running-the-script)
+    * [on the command line](#Running-on-the-commandline)
+    * [as a service with systemd](#Running-as-a-systemd-service)
   * [Meter setup](#Meter-setup)
   * [Troubleshooting](#Troubleshooting)
     * [Read the log file](#Read-the-log-file)
@@ -68,7 +70,20 @@ These parameters can be added to the config.yaml file. Atleast one parameter mus
 | infoevent |   |
 | hourcounter | |
 
-## Running the script as a service with systemd
+
+  * [Running the script](#Running-the-script)
+    * [on the command line](#Running-on-the-commandline)
+    * [as a service with systemd](#Running-as-a-systemd-service)
+
+## Running the script
+
+### Running on the commandline
+The script can be started by simply starting the daemon file with Python 3.
+``` bash
+python3 daemon.py &
+```
+
+### Running as a systemd service
 Edit the kamstrup_meter.service file and adjust the path accordingly. The working directory in this example is /opt/kamstrup/.
 ``` bash kamstrup_meter.service
 [Unit]
