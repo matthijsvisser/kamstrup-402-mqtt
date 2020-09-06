@@ -30,7 +30,7 @@ The library can be configured to fit your needs using the config.yaml file. The 
 | topic | MQTT topic where the values are published on |
 | com_port | port of serial communication device |
 | parameters | List of parameters that are read and published to the configured MQTT topic. See [Meter parameters](###Kamstrup-meter-parameters) table. |
-| poll_interval | Meter readout interval in minutes |
+| poll_interval | Meter readout interval in minutes (value should be less than 30 to prevent the meter from going in standby mode|
 
 ### Kamstrup meter parameters
 These parameters can be added to the config.yaml file. Atleast one parameter must be present in the configuration file.
@@ -108,7 +108,7 @@ The log file will, in most cases, spoil what going on if something's not working
 tail -f debug.log
 ```
 ### Reading values
-If you have any troubles with retrieving the values from the meter, make sure that you've positioned the meter head correctly. I may take a while to find the sweet spot. For some reason the position for the meter head that I've got is a little bit higher than what the distance keepers on the meter suggest.
+If you have any troubles with retrieving the values from the meter, make sure that the meter is 'awake', you can do so by pressing any button on the meter. It is also important that you've positioned the meter head correctly. I may take a while to find the sweet spot. For some reason the position for the meter head that I've got is a little bit higher than what the distance keepers on the meter suggest.
 
 ### Finding the correct com port
 Unplug the usb connector from the computer and plug it back in. Use dmesg to find the com port.
