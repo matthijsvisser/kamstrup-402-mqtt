@@ -2,15 +2,15 @@
 This project provides a Python library that enables communication with the Kamstrup Multical 402 heat meter. The configured parameters will be read from the meter at a certain interval and published in MQTT messages.
 
 # Contents
-  * [Requirements](##Requirements)
-  * [Configuration file](##Configuration-file)
-    * [Kamstrup meter parameters](###Kamstrup-meter-parameters)
-  * [Running the script as a service with systemd](##Running-the-script-as-a-service-with-systemd)
-  * [Meter setup](Meter-setup)
-  * [Troubleshooting](##Troubleshooting)
-    * [Read the log file](###Read-the-log-file)
-    * [Reading values](###Reading-values)
-    * [Finding the correct com port](Finding-the-correct-com-port)
+  * [Requirements](#Requirements)
+  * [Configuration file](#Configuration-file)
+    * [Kamstrup meter parameters](#Kamstrup-meter-parameters)
+  * [Running the script as a service with systemd](#Running-the-script-as-a-service-with-systemd)
+  * [Meter setup](#Meter-setup)
+  * [Troubleshooting](#Troubleshooting)
+    * [Read the log file](#Read-the-log-file)
+    * [Reading values](#Reading-values)
+    * [Finding the correct com port](#Finding-the-correct-com-port)
 
 ## Requirements
 * Python 3
@@ -29,7 +29,7 @@ The library can be configured to fit your needs using the config.yaml file. The 
 | client | Client name to identify this MQTT client e.g. Kamstrup |
 | topic | MQTT topic where the values are published on |
 | com_port | port of serial communication device |
-| parameters | List of parameters that are read and published to the configured MQTT topic. See [Meter parameters](###Kamstrup-meter-parameters) table. |
+| parameters | List of parameters that are read and published to the configured MQTT topic. See [Meter parameters](#Kamstrup-meter-parameters) table. |
 | poll_interval | Meter readout interval in minutes (value should be less than 30 to prevent the meter from going in standby mode|
 
 ### Kamstrup meter parameters
