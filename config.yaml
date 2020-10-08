@@ -3,6 +3,11 @@ mqtt:
     port: 1883
     client: kamstrup
     topic: kamstrup
+    qos: 0
+    retain: False
+    authentication: False
+    username: user1
+    password: changeit
 serial_device:
     com_port: /dev/ttyUSB1
 kamstrup:

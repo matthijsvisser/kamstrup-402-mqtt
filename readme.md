@@ -30,6 +30,11 @@ The library can be configured to fit your needs using the config.yaml file. The 
 | port | MQTT broker port number |
 | client | Client name to identify this MQTT client e.g. Kamstrup |
 | topic | MQTT topic where the values are published on |
+| retain | If set to true, the message will be set as the "last known good"/retained message for the topic |
+| qos | The quality of service level to use for the message. Cane be any value between 0 and 2 |
+| authentication | Set this to true if your MQTT broker requires authentication |
+| username | Username to connect to broker |
+| password | Password to connect to broker | 
 | com_port | port of serial communication device |
 | parameters | List of parameters that are read and published to the configured MQTT topic. See [Meter parameters](#Kamstrup-meter-parameters) table. |
 | poll_interval | Meter readout interval in minutes (value should be less than 30 to prevent the meter from going in standby mode|
