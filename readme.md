@@ -18,7 +18,7 @@ This project provides a Python library that enables communication with the Kamst
 * Python 3
   * [Pyserial](https://pypi.org/project/pyserial/)
   * [Paho MQTT](https://pypi.org/project/paho-mqtt/)
-  * [Yaml](https://pypi.org/project/yaml-1.3/)
+  * [PyYaml](https://pypi.org/project/PyYAML/)
 * MQTT broker e.g.: [Mosquitto](https://mosquitto.org/)
 * Infrared read/write USB cable e.g.: [IR Schreib/Lesekopf USB (Optokopf)](https://shop.weidmann-elektronik.de/index.php?page=product&info=24)
 

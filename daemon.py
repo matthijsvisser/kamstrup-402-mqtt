@@ -24,7 +24,7 @@ from logging.handlers import TimedRotatingFileHandler
 
 
 log = logging.getLogger("log")
-log.setLevel(logging.INFO)
+log.setLevel(logging.DEBUG)
 
 handler = TimedRotatingFileHandler('debug.log', when="d", interval=1, backupCount=5)
 

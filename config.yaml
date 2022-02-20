@@ -9,7 +9,7 @@ mqtt:
     username: user1
     password: changeit
 serial_device:
-    com_port: /dev/ttyUSB1
+    com_port: /dev/ttyKamstrup
 kamstrup:
     parameters:
     - energy
