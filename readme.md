@@ -14,6 +14,7 @@ This project provides a Python library that enables communication with the Kamst
     * [Read the log file](#Read-the-log-file)
     * [Reading values](#Reading-values)
     * [Finding the correct com port](#Finding-the-correct-com-port)
+    * [Systemd activity](#Systemd-activity)
   * [Add sensors to Home Assistant](#Add-sensors-to-home-assistant)
 
 ## Requirements
@@ -23,7 +24,7 @@ This project provides a Python library that enables communication with the Kamst
   * [PyYaml](https://pypi.org/project/PyYAML/)
 * MQTT broker e.g.: [Mosquitto](https://mosquitto.org/)
 * Infrared read/write USB cable e.g.: IR Schreib/Lesekopf USB (Optokopf) from [shop](https://shop.weidmann-elektronik.de/index.php?page=product&info=24) or [ebay](https://www.ebay.de/itm/274962288487)
-* Hardware such as a (Raspberry Zero W)[https://www.raspberrypi.com/products/raspberry-pi-zero-2-w/] with (USB cable)[https://www.raspberrypi.com/products/micro-usb-male-to-usb-a-female-cable/]
+* Hardware such as a [Raspberry Zero W](https://www.raspberrypi.com/products/raspberry-pi-zero-2-w/) with [USB cable](https://www.raspberrypi.com/products/micro-usb-male-to-usb-a-female-cable/)
 
 ## Installation
 Following the instructions by [Pieter Brinkman](https://www.pieterbrinkman.com/about-me/) in [this blog post](https://www.pieterbrinkman.com/2022/02/01/make-your-city-heating-stadsverwarming-smart-and-connect-it-home-assistant-energy-dashboard/)
@@ -39,11 +40,13 @@ pip3 install pyserial, paho-mqtt, PyAML
 Install git and clone this repository by
 ```
 apt-get install git
+cd ~
 git clone https://github.com/matthijsvisser/kamstrup-402-mqtt.git
 ```
 
 Configure the script as explained below
 ```
+cd kamstrup-402-mqtt
 nano config.yaml
 ```
 
@@ -112,7 +115,7 @@ python3 daemon.py &
 ```
 
 ### Running as a systemd service
-Edit the kamstrup_meter.service file and adjust the path accordingly. The working directory in this example is /opt/kamstrup/.
+Edit the kamstrup_meter.service file and adjust the path accordingly. Use ```pwd``` to see the full working directory. The working directory in this example is /opt/kamstrup/.
 ``` bash kamstrup_meter.service
 [Unit]
 Description=Kamstrup2mqtt Service
@@ -136,6 +139,7 @@ sudo systemctl daemon-reload
 sudo systemctl enable kamstrup_meter.service
 sudo service kamstrup_meter start
 ```
+
 
 ## Meter setup
 It can be hard to find the correct position of the meter head. It might differ if you are using an other model. I positioned the infrared head as follows:
@@ -171,6 +175,10 @@ to list all python3 processes. You can kill the daemon with
 kill -9 [process id]
 ```
 where ```[process id]``` is the id displayed by the ```ps``` command above.
+
+### Systemd activity
+When [running as a systemd service](#running-as-a-systemd-service), you can check recent systemd activity with ```journalctl -f```. You should also see an active python3 process. When you kill the process, it restarts automatically.
+
 
 ## Add sensors to Home Assistant
 Adapted from the instructions by [Pieter Brinkman](https://www.pieterbrinkman.com/about-me/) in [this blog post](https://www.pieterbrinkman.com/2022/02/01/make-your-city-heating-stadsverwarming-smart-and-connect-it-home-assistant-energy-dashboard/), updated according to the [MQTT integration in Home Assistant](https://www.home-assistant.io/integrations/sensor.mqtt/).
