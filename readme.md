@@ -1,8 +1,9 @@
 # Kamstrup multical 402 MQTT library
 This project provides a Python library that enables communication with the Kamstrup Multical 402 heat meter. The configured parameters will be read from the meter at a certain interval and published in MQTT messages.
 
-# Contents
+## Contents
   * [Requirements](#Requirements)
+  * [Installation](#Installation)
   * [Configuration file](#Configuration-file)
     * [Kamstrup meter parameters](#Kamstrup-meter-parameters)
   * [Running the script](#Running-the-script)
@@ -13,22 +14,40 @@ This project provides a Python library that enables communication with the Kamst
     * [Read the log file](#Read-the-log-file)
     * [Reading values](#Reading-values)
     * [Finding the correct com port](#Finding-the-correct-com-port)
-  * [Adding sensors to Home Assistant](#Adding-sensors-to-home-assistant)
+  * [Add sensors to Home Assistant](#Add-sensors-to-home-assistant)
 
 ## Requirements
 * Python 3
   * [Pyserial](https://pypi.org/project/pyserial/)
   * [Paho MQTT](https://pypi.org/project/paho-mqtt/)
   * [PyYaml](https://pypi.org/project/PyYAML/)
-    ```
-    sudo su
-    apt-get update
-    apt-get install python3-pip
-    pip3 install pyserial, paho-mqtt, PyAML
-    ```
 * MQTT broker e.g.: [Mosquitto](https://mosquitto.org/)
 * Infrared read/write USB cable e.g.: IR Schreib/Lesekopf USB (Optokopf) from [shop](https://shop.weidmann-elektronik.de/index.php?page=product&info=24) or [ebay](https://www.ebay.de/itm/274962288487)
 * Hardware such as a (Raspberry Zero W)[https://www.raspberrypi.com/products/raspberry-pi-zero-2-w/] with (USB cable)[https://www.raspberrypi.com/products/micro-usb-male-to-usb-a-female-cable/]
+
+## Installation
+Following the instructions by [Pieter Brinkman](https://www.pieterbrinkman.com/about-me/) in [this blog post](https://www.pieterbrinkman.com/2022/02/01/make-your-city-heating-stadsverwarming-smart-and-connect-it-home-assistant-energy-dashboard/)
+
+On a Raspberry Zero W, run the following commands to install Python3 and the required packages.
+```
+sudo su
+apt-get update
+apt-get install python3-pip
+pip3 install pyserial, paho-mqtt, PyAML
+```
+
+Install git and clone this repository by
+```
+apt-get install git
+git clone https://github.com/matthijsvisser/kamstrup-402-mqtt.git
+```
+
+Configure the script as explained below
+```
+nano config.yaml
+```
+
+Depending on your setup, [add sensors to Home Assistant](#Add-sensors-to-home-assistant).
 
 ## Configuration file
 The library can be configured to fit your needs using the config.yaml file. The parameters of this file are described below.
@@ -84,10 +103,6 @@ These parameters can be added to the config.yaml file. Atleast one parameter mus
 | hourcounter | |
 
 
-  * [Running the script](#Running-the-script)
-    * [on the command line](#Running-on-the-commandline)
-    * [as a service with systemd](#Running-as-a-systemd-service)
-
 ## Running the script
 
 ### Running on the commandline
@@ -138,7 +153,7 @@ tail -f debug.log
 ### Reading values
 If you have any troubles with retrieving the values from the meter, make sure that the meter is 'awake', you can do so by pressing any button on the meter. The meter will stay awake for at most 30 minutes when there is no IR activities nor any buttons pressed. It is also important that you've positioned the meter head correctly. I may take a while to find the sweet spot. For some reason the position for the meter head that I've got is a little bit higher than what the distance keepers on the meter suggest.
 
-In order to find the right spot, it helps to set the ```poll_interval``` interval to 0 and run the daemon manually so that the daemon keeps trying to read out values. Look at the log file until you see values reported back.  
+In order to find the right spot on the meter, it helps to set the ```poll_interval``` interval to 0 and [run the daemon from the command line](#Running-on-the-commandline) so that the daemon keeps trying to read out values. [Watch the log file](#Read-the-log-file) until you see values reported back.  
 
 ### Finding the correct com port
 Unplug the usb connector from the computer/raspberry pi and plug it back in. Use dmesg to find the com port reported as one of the last few messages.
@@ -146,7 +161,7 @@ Unplug the usb connector from the computer/raspberry pi and plug it back in. Use
 dmesg
 ```
 
-### restarting the daemon
+### Restarting the daemon
 Use
 ```
 ps -aef | grep python
@@ -155,9 +170,10 @@ to list all python3 processes. You can kill the daemon with
 ```
 kill -9 [process id]
 ```
+where ```[process id]``` is the id displayed by the ```ps``` command above.
 
-## Adding sensors to Home Assistant
-Adapted from the instructions by Pieter Brinkman in [this blog post](https://www.pieterbrinkman.com/2022/02/01/make-your-city-heating-stadsverwarming-smart-and-connect-it-home-assistant-energy-dashboard/), updated according to [MQTT integration of Home Assistant](https://www.home-assistant.io/integrations/sensor.mqtt/)
+## Add sensors to Home Assistant
+Adapted from the instructions by [Pieter Brinkman](https://www.pieterbrinkman.com/about-me/) in [this blog post](https://www.pieterbrinkman.com/2022/02/01/make-your-city-heating-stadsverwarming-smart-and-connect-it-home-assistant-energy-dashboard/), updated according to the [MQTT integration in Home Assistant](https://www.home-assistant.io/integrations/sensor.mqtt/).
 
 1. Install and configure the Mosquitto MQTT broker addon in Home Assistant, following [these instructions](https://github.com/home-assistant/addons/blob/master/mosquitto/DOCS.md). In the process, you create [a new Home Assistant user](http://homeassistant.local:8123/config/users).
 
