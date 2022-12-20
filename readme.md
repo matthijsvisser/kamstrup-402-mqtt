@@ -1,3 +1,7 @@
+![GitHub](https://img.shields.io/github/license/matthijsvisser/kamstrup-402-mqtt?style=flat-square)
+![GitHub](https://img.shields.io/github/issues/matthijsvisser/kamstrup-402-mqtt?style=flat-square)
+![GitHub](https://img.shields.io/github/issues-closed/matthijsvisser/kamstrup-402-mqtt)
+
 # Kamstrup multical 402 MQTT library
 This project provides a Python library that enables communication with the Kamstrup Multical 402 heat meter. The configured parameters will be read from the meter at a certain interval and published in MQTT messages.
 
