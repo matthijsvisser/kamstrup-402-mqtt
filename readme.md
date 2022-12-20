@@ -3,7 +3,7 @@
 ![GitHub](https://img.shields.io/github/issues-closed/matthijsvisser/kamstrup-402-mqtt)
 
 # Kamstrup multical 402 MQTT library
-This project provides a Python library that enables communication with the Kamstrup Multical 402 heat meter. The configured parameters will be read from the meter at a certain interval and published in MQTT messages.
+This project provides a Python library that enables communication with the Kamstrup Multical 402 heat meter. The configured parameters will be read from the meter at a certain interval and published in MQTT messages. This guide uses Linux as a base operating system.
 
 # Contents
 - [Kamstrup multical 402 MQTT library](#kamstrup-multical-402-mqtt-library)
@@ -26,12 +26,16 @@ This project provides a Python library that enables communication with the Kamst
     - [Finding the correct com port](#finding-the-correct-com-port)
 
 ## Requirements
-* Python 3
+The following software and packages are required to run the script via the commandline or as a service
+* [Python 3](https://www.python.org/downloads/)
   * [Pyserial](https://pypi.org/project/pyserial/)
   * [Paho MQTT](https://pypi.org/project/paho-mqtt/)
   * [PyYaml](https://pypi.org/project/PyYAML/)
 * MQTT broker e.g.: [Mosquitto](https://mosquitto.org/)
-* Infrared read/write USB cable e.g.: [IR Schreib/Lesekopf USB (Optokopf)](https://shop.weidmann-elektronik.de/index.php?page=product&info=24)
+* See [Docker requirements](#requirements-1) to run the project as a docker container.
+
+Required hardware
+* Infrared read/write USB cable e.g.: [IR Schreib/Lesekopf USB (Optokopf)](https://shop.weidmann-elektronik.de/index.php?page=product&info=24) or something simulair.
 
 ## Configuration file
 The library can be configured to fit your needs using the config.yaml file. The parameters of this file are described below.
@@ -86,11 +90,6 @@ These parameters can be added to the config.yaml file. Atleast one parameter mus
 | infoevent |   |
 | hourcounter | |
 
-
-  * [Running the script](#Running-the-script)
-    * [on the command line](#Running-on-the-commandline)
-    * [as a service with systemd](#Running-as-a-systemd-service)
-
 ## Running the script
 
 ### Running on the commandline
@@ -98,6 +97,13 @@ The script can be started by simply starting the daemon file with Python 3.
 ``` bash
 python3 daemon.py &
 ```
+The & will start the Python script as a daemon process. 
+The following output is a example of what to expect in the log file when the meter is receiving actual data from the meter.
+``` bash
+mqtt_handler.py publish:  46 - INFO - Publishing 'kamstrup/values' '{"energy": 227.445, "volume": 2131.935, "temp1": 52.81, "temp2": 39.94}' to 10.0.0.210:1883]
+```
+By subscribing to the configured mqtt topic on the MQTT broker we can view these messages. You can use [MQTT Explorer](https://mqtt-explorer.com/) for debugging to test the MQTT part.
+
 
 ### Running as a systemd service
 Edit the kamstrup_meter.service file and adjust the path accordingly. The working directory in this example is /opt/kamstrup/.
