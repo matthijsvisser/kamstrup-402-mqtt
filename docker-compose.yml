@@ -1,0 +1,10 @@
+version: "3.3"
+services:
+  kamstrup:
+    image: kamstrup:latest
+    restart: unless-stopped
+    devices:
+      - /dev/ttyKamstrup:/dev/ttyKamstrup
+    volumes:
+      - ./config.yaml:/opt/kamstrup/config.yaml
+      - ./logs/:/opt/kamstrup/logs/

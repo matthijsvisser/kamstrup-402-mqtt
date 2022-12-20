@@ -1,12 +1,5 @@
 #!/usr/bin/python
 #
-# ----------------------------------------------------------------------------
-# "THE BEER-WARE LICENSE" (Revision 42):
-# <phk@FreeBSD.ORG> wrote this file.  As long as you retain this notice you
-# can do whatever you want with this stuff. If we meet some day, and you think
-# this stuff is worth it, you can buy me a beer in return.   Poul-Henning Kamp
-# ----------------------------------------------------------------------------
-#
 # Created by Matthijs Visser
 
 import datetime
@@ -26,7 +19,7 @@ from logging.handlers import TimedRotatingFileHandler
 log = logging.getLogger("log")
 log.setLevel(logging.DEBUG)
 
-handler = TimedRotatingFileHandler('debug.log', when="d", interval=1, backupCount=5)
+handler = TimedRotatingFileHandler('logs/debug.log', when="d", interval=1, backupCount=5)
 
 formatter = logging.Formatter("[%(asctime)s %(filename)s %(funcName)s:%(lineno)4s - %(levelname)s - %(message)s]",
 							  "%Y-%m-%d %H:%M:%S")

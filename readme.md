@@ -2,17 +2,24 @@
 This project provides a Python library that enables communication with the Kamstrup Multical 402 heat meter. The configured parameters will be read from the meter at a certain interval and published in MQTT messages.
 
 # Contents
-  * [Requirements](#Requirements)
-  * [Configuration file](#Configuration-file)
-    * [Kamstrup meter parameters](#Kamstrup-meter-parameters)
-  * [Running the script](#Running-the-script)
-    * [on the command line](#Running-on-the-commandline)
-    * [as a service with systemd](#Running-as-a-systemd-service)
-  * [Meter setup](#Meter-setup)
-  * [Troubleshooting](#Troubleshooting)
-    * [Read the log file](#Read-the-log-file)
-    * [Reading values](#Reading-values)
-    * [Finding the correct com port](#Finding-the-correct-com-port)
+- [Kamstrup multical 402 MQTT library](#kamstrup-multical-402-mqtt-library)
+- [Contents](#contents)
+  - [Requirements](#requirements)
+  - [Configuration file](#configuration-file)
+    - [Kamstrup meter parameters](#kamstrup-meter-parameters)
+  - [Running the script](#running-the-script)
+    - [Running on the commandline](#running-on-the-commandline)
+    - [Running as a systemd service](#running-as-a-systemd-service)
+    - [Running as a Docker container](#running-as-a-docker-container)
+      - [Requirements](#requirements-1)
+      - [Building the image](#building-the-image)
+      - [Initial start of container](#initial-start-of-container)
+      - [Container management](#container-management)
+  - [Meter setup](#meter-setup)
+  - [Troubleshooting](#troubleshooting)
+    - [Read the log file](#read-the-log-file)
+    - [Reading values](#reading-values)
+    - [Finding the correct com port](#finding-the-correct-com-port)
 
 ## Requirements
 * Python 3
@@ -112,6 +119,44 @@ cp /opt/kamstrup/kamstrup_meter.service /etc/systemd/system/
 sudo systemctl daemon-reload
 sudo systemctl enable kamstrup_meter.service
 sudo service kamstrup_meter start
+```
+
+### Running as a Docker container
+
+#### Requirements
+Make sure the following is installed: 
+* [docker](https://docs.docker.com/get-docker/)
+* [docker-compose**](https://docs.docker.com/compose/)
+
+**Docker-compose is optional but useful and easy to configure.
+
+#### Building the image
+Build a docker image "kamstrup"
+``` bash
+docker build -t kamstrup .
+```
+Edit the docker-compose.yml file and adjust the "devices" parameter accordingly. Syntax is:
+``` bash
+<Path must match usb device --> /dev/ttyKamstrup:/dev/ttyKamstrup <-- Inside container, must match path of config.yml>
+```
+
+#### Initial start of container
+Initial start of the container:
+``` bash
+docker-compose up -d
+```
+The container should run now and produce output via Mqtt. If not, check the logging in logs.
+
+#### Container management
+After the initial start of the container it can be stopped and started again with the folowing commands:
+``` bash
+docker start kamstrup_kamstrup_1
+docker stop kamstrup_kamstrup_1
+docker restart kamstrup_kamstrup_1
+```
+Check if the container is running  with:
+``` bash
+docker stats
 ```
 
 ## Meter setup
