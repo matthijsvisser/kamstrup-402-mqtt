@@ -8,6 +8,11 @@ mqtt:
     authentication: False
     username: user1
     password: changeit
+    tls_enabled: False
+    tls_ca_cert: 
+    tls_cert:
+    tls_key:
+    tls_insecure: True
 serial_device:
     com_port: /dev/ttyKamstrup
 kamstrup:
