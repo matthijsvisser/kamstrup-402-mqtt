@@ -52,7 +52,9 @@ class KamstrupDaemon(multiprocessing.Process):
 		if (mqtt_cfg["authentication"].lower() == "true"):
 			self.mqtt_handler = MqqtHandler(mqtt_cfg["host"], int(mqtt_cfg["port"]), 
 				mqtt_cfg["client"], mqtt_cfg["topic"], retain, int(mqtt_cfg["qos"]), 
-				True, mqtt_cfg["username"], mqtt_cfg["password"])
+				True, mqtt_cfg["username"], mqtt_cfg["password"], mqtt_cfg["tls_enabled"],
+                                mqtt_cfg["tls_ca_cert"], mqtt_cfg["tls_cert"], mqtt_cfg["tls_key"],
+                                mqtt_cfg["tls_insecure"])
 		else:
 			self.mqtt_handler = MqqtHandler(mqtt_cfg["host"], int(mqtt_cfg["port"]), 
 				mqtt_cfg["client"], mqtt_cfg["topic"], retain, int(mqtt_cfg["qos"]))
