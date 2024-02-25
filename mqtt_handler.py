@@ -25,7 +25,7 @@ class MqqtHandler (object):
 	
 	def connect(self):
 		settings_message = ""
-		self.mqtt_client = paho.Client(self.client_id, True)
+		self.mqtt_client = paho.Client(paho.CallbackAPIVersion.VERSION1, self.client_id, True)
 
 		if self.authentication:
 			self.mqtt_client.username_pw_set(self.user, self.password)
