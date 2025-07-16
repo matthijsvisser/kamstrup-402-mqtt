@@ -5,6 +5,10 @@
 # Kamstrup multical 402 MQTT library
 This project provides a Python library that enables communication with the Kamstrup Multical 402 heat meter. The configured parameters will be read from the meter at a certain interval and published in MQTT messages. This guide uses Linux as a base operating system.
 
+Also works with:
+Kamstrup multical 603 by [seranoo](https://github.com/seranoo) in https://github.com/matthijsvisser/kamstrup-402-mqtt/issues/17
+Kamstrup multical 403 by [WobwobRt](https://github.com/WobwobRt) and [spaya1](https://github.com/spaya1) in https://github.com/matthijsvisser/kamstrup-402-mqtt/issues/14 and https://github.com/matthijsvisser/kamstrup-402-mqtt/issues/1
+
 # Contents
 - [Kamstrup multical 402 MQTT library](#kamstrup-multical-402-mqtt-library)
 - [Contents](#contents)
