@@ -4,8 +4,8 @@ After=multi-user.target
 
 [Service]
 Type=simple
-WorkingDirectory=/opt/kamstrup
-ExecStart=/usr/bin/python3 /opt/kamstrup/daemon.py
+WorkingDirectory=/opt/kamstrup2mqtt
+ExecStart=/usr/bin/python3 /opt/kamstrup2mqtt/daemon.py
 StandardOutput=null
 StandardError=journal
 Restart=always
