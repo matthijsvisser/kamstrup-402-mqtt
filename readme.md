@@ -5,6 +5,10 @@
 # Kamstrup multical 402 MQTT library
 This project provides a Python library that enables communication with the Kamstrup Multical 402 heat meter. The configured parameters will be read from the meter at a certain interval and published in MQTT messages. This guide uses Linux as a base operating system.
 
+Also works with:
+Kamstrup multical 603 by [seranoo](https://github.com/seranoo) in https://github.com/matthijsvisser/kamstrup-402-mqtt/issues/17
+Kamstrup multical 403 by [WobwobRt](https://github.com/WobwobRt) and [spaya1](https://github.com/spaya1) in https://github.com/matthijsvisser/kamstrup-402-mqtt/issues/14 and https://github.com/matthijsvisser/kamstrup-402-mqtt/issues/1
+
 # Contents
 - [Kamstrup multical 402 MQTT library](#kamstrup-multical-402-mqtt-library)
 - [Contents](#contents)
@@ -41,14 +45,14 @@ Required hardware
 The library can be configured to fit your needs using the config.yaml file. The parameters of this file are described below.
 | parameter name | description |
 | - | - |
-| broker | MQTT broker host domain name or IP address |
+| host | MQTT broker host domain name or IP address |
 | port | MQTT broker port number |
-| client_id | Client name to identify this MQTT client e.g. Kamstrup |
-| topic_prefix | MQTT topic where the values are published on |
+| client | Client name to identify this MQTT client e.g. Kamstrup |
+| topic | MQTT topic where the values are published on |
 | retain | If set to true, the message will be set as the "last known good"/retained message for the topic |
 | qos | The quality of service level to use for the message. Cane be any value between 0 and 2 |
 | authentication | Set this to true if your MQTT broker requires authentication |
-| user | Username to connect to broker |
+| username | Username to connect to broker |
 | password | Password to connect to broker | 
 | com_port | port of serial communication device |
 | parameters | List of parameters that are read and published to the configured MQTT topic. See [Meter parameters](#Kamstrup-meter-parameters) table. |
