@@ -1,18 +1,20 @@
 mqtt:
-    host: 10.0.0.210
+    broker: 10.0.0.210
     port: 1883
-    client: kamstrup
-    topic: kamstrup
+    client_id: kamstrup
+    topic_prefix: kamstrup
     qos: 0
     retain: False
     authentication: False
-    username: user1
+    user: user1
     password: changeit
     tls_enabled: False
-    tls_ca_cert: 
-    tls_cert:
-    tls_key:
-    tls_insecure: True
+    # tls_ca_cert: 
+    # tls_cert:
+    # tls_key:
+    # tls_key_password:
+    # tls_insecure: True
+    # tls_version: ssl.PROTOCOL_TLSv1_2
 serial_device:
     com_port: /dev/ttyKamstrup
 kamstrup:

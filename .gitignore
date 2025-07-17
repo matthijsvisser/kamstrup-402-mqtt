@@ -3,3 +3,6 @@
 log
 .db
 *.pyc
+config.yaml
+ca.crt
+docker-compose.yml
