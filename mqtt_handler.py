@@ -12,23 +12,9 @@ log.setLevel(logging.INFO)
 
 class MqqtHandler (object):
     
-	def __init__(self, broker_ip, broker_port, client_id, topic_prefix, retain=False, qos=0,
-			authentication=False, user="", password="", tls_enabled=False,
-			tls_ca_cert="", tls_cert="", tls_key="",tls_insecure=True):
-		self.broker = broker_ip
-		self.port = broker_port
-		self.client_id = client_id
-		self.topic_prefix = topic_prefix
-		self.retain = retain
-		self.qos = qos
-		self.authentication = authentication
-		self.user = user
-		self.password = password
-		self.tls_enabled = tls_enabled
-		self.tls_ca_cert = tls_ca_cert
-		self.tls_cert = tls_cert
-		self.tls_key = tls_key
-		self.tls_insecure = tls_insecure
+	def __init__(self, data):
+		for key, value in data.items():
+			setattr(self, key, value)
 	
 	def connect(self):
 		settings_message = ""
@@ -38,8 +24,8 @@ class MqqtHandler (object):
 			self.mqtt_client.username_pw_set(self.user, self.password)
 			settings_message = 'with username {}, '.format(self.user)
 		if self.tls_enabled:
-                        self.mqtt_client.tls_set(self.tls_ca_cert,tls_version=ssl.PROTOCOL_TLSv1_2)
-                        self.mqtt_client.tls_insecure_set(self.tls_insecure)
+			self.mqtt_client.tls_set(self.data)
+			self.mqtt_client.tls_insecure_set(self.tls_insecure)
 
 		self.mqtt_client.connect(self.broker, self.port, 60)
 		self.mqtt_client.loop_start()
