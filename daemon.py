@@ -12,7 +12,7 @@ import paho.mqtt.client as paho
 import multiprocessing
 import yaml
 from kamstrup_meter import kamstrup
-from mqtt_handler import MqqtHandler
+from mqtt_handler import MqttHandler
 from logging.handlers import TimedRotatingFileHandler
 
 
@@ -44,7 +44,7 @@ class KamstrupDaemon(multiprocessing.Process):
 
 		signal.signal(signal.SIGINT, self.signal_handler)
 
-		self.mqtt_handler = MqqtHandler(mqtt_cfg)
+		self.mqtt_handler = MqttHandler(mqtt_cfg)
 		self.mqtt_handler.connect()
 		self.mqtt_handler.loop_start()
 
