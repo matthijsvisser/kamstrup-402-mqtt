@@ -3,3 +3,5 @@
 log
 .db
 *.pyc
+config.yaml
+ca.crt
