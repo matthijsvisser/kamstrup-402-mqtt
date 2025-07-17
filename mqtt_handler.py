@@ -10,7 +10,7 @@ from logging.handlers import TimedRotatingFileHandler
 log = logging.getLogger("log")
 log.setLevel(logging.INFO)
 
-class MqqtHandler (object):
+class MqttHandler (object):
     
 	def __init__(self, data):
 		for key, value in data.items():
