@@ -25,10 +25,10 @@ class MqqtHandler (object):
 		self.user = user
 		self.password = password
 		self.tls_enabled = tls_enabled
-                self.tls_ca_cert = tls_ca_cert
-                self.tls_cert = tls_cert
-                self.tls_key = tls_key
-                self.tls_insecure = tls_insecure
+		self.tls_ca_cert = tls_ca_cert
+		self.tls_cert = tls_cert
+		self.tls_key = tls_key
+		self.tls_insecure = tls_insecure
 	
 	def connect(self):
 		settings_message = ""
