@@ -27,7 +27,7 @@ handler.setFormatter(formatter)
 log.addHandler(handler)
 
 with open("config.yaml", "r") as ymlfile:
-	cfg = yaml.load(ymlfile, Loader=yaml.BaseLoader)
+	cfg = yaml.safe_load(ymlfile)
 
 class KamstrupDaemon(multiprocessing.Process):
 	def __init__(self):
@@ -44,20 +44,7 @@ class KamstrupDaemon(multiprocessing.Process):
 
 		signal.signal(signal.SIGINT, self.signal_handler)
 
-		if (mqtt_cfg["retain"].lower() == "true"):
-			retain = True
-		else:
-			retain = False
-		
-		if (mqtt_cfg["authentication"].lower() == "true"):
-			self.mqtt_handler = MqqtHandler(mqtt_cfg["host"], int(mqtt_cfg["port"]), 
-				mqtt_cfg["client"], mqtt_cfg["topic"], retain, int(mqtt_cfg["qos"]), 
-				True, mqtt_cfg["username"], mqtt_cfg["password"], mqtt_cfg["tls_enabled"],
-                                mqtt_cfg["tls_ca_cert"], mqtt_cfg["tls_cert"], mqtt_cfg["tls_key"],
-                                mqtt_cfg["tls_insecure"])
-		else:
-			self.mqtt_handler = MqqtHandler(mqtt_cfg["host"], int(mqtt_cfg["port"]), 
-				mqtt_cfg["client"], mqtt_cfg["topic"], retain, int(mqtt_cfg["qos"]))
+		self.mqtt_handler = MqqtHandler(mqtt_cfg)
 		self.mqtt_handler.connect()
 		self.mqtt_handler.loop_start()
 
