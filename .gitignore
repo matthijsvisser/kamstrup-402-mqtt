@@ -5,3 +5,4 @@ log
 *.pyc
 config.yaml
 ca.crt
+docker-compose.yml
