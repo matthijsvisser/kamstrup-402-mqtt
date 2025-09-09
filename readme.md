@@ -1,196 +1,415 @@
+# Kamstrup Multical 402 MQTT Library
+
 ![GitHub](https://img.shields.io/github/license/matthijsvisser/kamstrup-402-mqtt?style=flat-square)
-![GitHub](https://img.shields.io/github/issues/matthijsvisser/kamstrup-402-mqtt?style=flat-square)
-![GitHub](https://img.shields.io/github/issues-closed/matthijsvisser/kamstrup-402-mqtt)
+![GitHub Issues](https://img.shields.io/github/issues/matthijsvisser/kamstrup-402-mqtt?style=flat-square)
+![GitHub Closed Issues](https://img.shields.io/github/issues-closed/matthijsvisser/kamstrup-402-mqtt?style=flat-square)
+![Python Version](https://img.shields.io/badge/python-3.8%2B-blue?style=flat-square)
 
-# Kamstrup multical 402 MQTT library
-This project provides a Python library that enables communication with the Kamstrup Multical 402 heat meter. The configured parameters will be read from the meter at a certain interval and published in MQTT messages. This guide uses Linux as a base operating system.
+A Python library that enables communication with Kamstrup Multical heat meters via serial communication and publishes the data to MQTT brokers. This project provides a robust, well-documented solution for integrating Kamstrup heat meters into home automation systems.
 
-Also works with:
-Kamstrup multical 603 by [seranoo](https://github.com/seranoo) in https://github.com/matthijsvisser/kamstrup-402-mqtt/issues/17
-Kamstrup multical 403 by [WobwobRt](https://github.com/WobwobRt) and [spaya1](https://github.com/spaya1) in https://github.com/matthijsvisser/kamstrup-402-mqtt/issues/14 and https://github.com/matthijsvisser/kamstrup-402-mqtt/issues/1
+## 🏠 Supported Devices
+
+- **Kamstrup Multical 402** (primary support)
+- **Kamstrup Multical 603** (confirmed by [seranoo](https://github.com/seranoo))
+- **Kamstrup Multical 403** (confirmed by [WobwobRt](https://github.com/WobwobRt) and [spaya1](https://github.com/spaya1))
+
+## ✨ Features
+
+- **Real-time Data Reading**: Continuous monitoring of heat meter parameters
+- **MQTT Publishing**: Publishes data to any MQTT broker with configurable QoS and retain settings
+- **Flexible Configuration**: YAML-based configuration with validation
+- **Multiple Parameters**: Support for energy, temperature, flow, volume, and statistical data
+- **Robust Error Handling**: Comprehensive error handling and logging
+- **Docker Support**: Ready-to-use Docker container and docker-compose setup
+- **Systemd Integration**: Service file for Linux systems
+- **TLS/SSL Support**: Secure MQTT connections with certificate authentication
 
 # Contents
-- [Kamstrup multical 402 MQTT library](#kamstrup-multical-402-mqtt-library)
-- [Contents](#contents)
-  - [Requirements](#requirements)
-  - [Configuration file](#configuration-file)
-    - [Kamstrup meter parameters](#kamstrup-meter-parameters)
-  - [Running the script](#running-the-script)
-    - [Running on the commandline](#running-on-the-commandline)
-    - [Running as a systemd service](#running-as-a-systemd-service)
-    - [Running as a Docker container](#running-as-a-docker-container)
-      - [Requirements](#requirements-1)
-      - [Building the image](#building-the-image)
-      - [Initial start of container](#initial-start-of-container)
-      - [Container management](#container-management)
-  - [Meter setup](#meter-setup)
-  - [Troubleshooting](#troubleshooting)
-    - [Read the log file](#read-the-log-file)
-    - [Reading values](#reading-values)
-    - [Finding the correct com port](#finding-the-correct-com-port)
 
-## Requirements
-The following software and packages are required to run the script via the commandline or as a service
-* [Python 3](https://www.python.org/downloads/)
-  * [Pyserial](https://pypi.org/project/pyserial/)
-  * [Paho MQTT](https://pypi.org/project/paho-mqtt/)
-  * [PyYaml](https://pypi.org/project/PyYAML/)
-* MQTT broker e.g.: [Mosquitto](https://mosquitto.org/)
-* See [Docker requirements](#requirements-1) to run the project as a docker container.
+- [📋 Requirements](#-requirements)
+- [⚙️ Configuration](#️-configuration)
+  - [📊 Available Meter Parameters](#-available-meter-parameters)
+- [🚀 Installation & Usage](#-installation--usage)
+  - [📦 Standard Installation](#-standard-installation)
+  - [🔧 Command Line Usage](#-command-line-usage)
+  - [🔄 Systemd Service](#-systemd-service)
+  - [🐳 Docker Container](#-docker-container)
+- [🔌 Hardware Setup](#-hardware-setup)
+- [🐛 Troubleshooting](#-troubleshooting)
+- [🤝 Contributing](#-contributing)
 
-Required hardware
-* Infrared read/write USB cable e.g.: [IR Schreib/Lesekopf USB (Optokopf)](https://shop.weidmann-elektronik.de/index.php?page=product&info=24) or something simulair.
+## 📋 Requirements
 
-## Configuration file
-The library can be configured to fit your needs using the config.yaml file. The parameters of this file are described below.
-| parameter name | description |
-| - | - |
-| host | MQTT broker host domain name or IP address |
-| port | MQTT broker port number |
-| client | Client name to identify this MQTT client e.g. Kamstrup |
-| topic | MQTT topic where the values are published on |
-| retain | If set to true, the message will be set as the "last known good"/retained message for the topic |
-| qos | The quality of service level to use for the message. Cane be any value between 0 and 2 |
-| authentication | Set this to true if your MQTT broker requires authentication |
-| username | Username to connect to broker |
-| password | Password to connect to broker | 
-| com_port | port of serial communication device |
-| parameters | List of parameters that are read and published to the configured MQTT topic. See [Meter parameters](#Kamstrup-meter-parameters) table. |
-| poll_interval | Meter readout interval in minutes (value should be less than 30 to prevent the meter from going in standby mode|
+### Software Requirements
+- **Python 3.8+** with pip package manager
+- **MQTT Broker** (e.g., [Mosquitto](https://mosquitto.org/), Home Assistant, etc.)
 
-### Kamstrup meter parameters
-These parameters can be added to the config.yaml file. Atleast one parameter must be present in the configuration file.
-| parameter name | description |
-| - | - |
-| energy | consumed energy in GJ |
-| power |   | 
-| temp1 | incoming temperature in degrees |  
-| temp2 | outgoing temperature in degrees| 
-| tempdiff | difference between temp1 and temp2 in degrees |  
-| flow | water flow in l/h |
-| volume | consumed water in m3 |      
-| minflow_m | minimum water flow |
-| maxflow_m | minimum water flow  |
-| minflowDate_m | |
-| maxflowDate_m | |
-| minpower_m | |
-| maxpower_m | |
-| avgtemp1_m | |
-| avgtemp2_m | |
-| minpowerdate_m | |
-| maxpowerdate_m | |
-| minflow_y | |
-| maxflow_y | |
-| minflowdate_y | |
-| maxflowdate_y | |
-| minpower_y | |
-| maxpower_y |  |
-| avgtemp1_y |  |
-| avgtemp2_y |  |
-| minpowerdate_y | |
-| maxpowerdate_y | |
-| temp1xm3 | |
-| temp2xm3 |   | 
-| infoevent |   |
-| hourcounter | |
+### Hardware Requirements
+- **Infrared USB Cable**: Compatible IR read/write head such as:
+  - [IR Schreib/Lesekopf USB (Optokopf)](https://shop.weidmann-elektronik.de/index.php?page=product&info=24)
+  - Any compatible infrared optical reader for Kamstrup meters
 
-## Running the script
+### Python Dependencies
+Core dependencies are automatically installed:
+- `paho-mqtt` - MQTT client library
+- `pyserial` - Serial communication
+- `PyYAML` - Configuration file parsing
 
-### Running on the commandline
-The script can be started by simply starting the daemon file with Python 3.
-``` bash
+## ⚙️ Configuration
+
+The library uses a `config.yaml` file for all settings. Here's a complete example:
+
+```yaml
+mqtt:
+  host: 192.168.1.100          # MQTT broker IP or hostname
+  port: 1883                    # MQTT broker port
+  client: kamstrup             # Unique client identifier
+  topic: kamstrup              # Base topic for publishing
+  qos: 0                       # Quality of Service (0, 1, or 2)
+  retain: false                # Retain messages on broker
+  authentication: false        # Enable username/password auth
+  username: user               # MQTT username (if auth enabled)
+  password: password           # MQTT password (if auth enabled)
+  tls_enabled: false          # Enable TLS/SSL encryption
+  tls_ca_cert: ""             # Path to CA certificate
+  tls_cert: ""                # Path to client certificate  
+  tls_key: ""                 # Path to client private key
+  tls_insecure: true          # Allow insecure TLS connections
+
+serial_device:
+  com_port: /dev/ttyUSB0       # Serial port for meter communication
+
+kamstrup:
+  parameters:                  # List of parameters to read
+    - energy
+    - volume
+    - temp1
+    - temp2
+    - flow
+  poll_interval: 28            # Reading interval in minutes (< 30 recommended)
+```
+
+### 📊 Available Meter Parameters
+
+| Parameter | Description | Unit |
+|-----------|-------------|------|
+| `energy` | Total energy consumption | GJ |
+| `power` | Current power consumption | kW |
+| `temp1` | Inlet temperature | °C |
+| `temp2` | Outlet temperature | °C |
+| `tempdiff` | Temperature difference | °C |
+| `flow` | Current flow rate | l/h |
+| `volume` | Total volume consumption | m³ |
+| `minflow_m` | Minimum flow this month | l/h |
+| `maxflow_m` | Maximum flow this month | l/h |
+| `minpower_m` | Minimum power this month | kW |
+| `maxpower_m` | Maximum power this month | kW |
+| `avgtemp1_m` | Average inlet temp this month | °C |
+| `avgtemp2_m` | Average outlet temp this month | °C |
+| `*_y` | Yearly statistics | Various |
+| `temp1xm3` | Temperature 1 × volume | °C×m³ |
+| `temp2xm3` | Temperature 2 × volume | °C×m³ |
+| `infoevent` | Information events | - |
+| `hourcounter` | Operating hours | h |
+
+> **Note**: Add at least one parameter to your configuration. Poll intervals ≥30 minutes may cause the meter to enter standby mode.
+
+## 🚀 Installation & Usage
+
+### 📦 Standard Installation
+
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/matthijsvisser/kamstrup-402-mqtt.git
+   cd kamstrup-402-mqtt
+   ```
+
+2. **Install dependencies:**
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+3. **Configure the application:**
+   ```bash
+   cp config.yaml config.yaml.backup
+   # Edit config.yaml with your settings
+   nano config.yaml
+   ```
+
+### 🔧 Command Line Usage
+
+Run the daemon directly from the command line:
+
+```bash
+python3 daemon.py
+```
+
+Run as a background process:
+```bash
 python3 daemon.py &
 ```
-The & will start the Python script as a daemon process. 
-The following output is a example of what to expect in the log file when the meter is receiving actual data from the meter.
-``` bash
-mqtt_handler.py publish:  46 - INFO - Publishing 'kamstrup/values' '{"energy": 227.445, "volume": 2131.935, "temp1": 52.81, "temp2": 39.94}' to 10.0.0.210:1883]
+
+**Example Output:**
 ```
-By subscribing to the configured mqtt topic on the MQTT broker we can view these messages. You can use [MQTT Explorer](https://mqtt-explorer.com/) for debugging to test the MQTT part.
-
-
-### Running as a systemd service
-Edit the kamstrup_meter.service file and adjust the path accordingly. The working directory in this example is /opt/kamstrup/.
-``` bash kamstrup_meter.service
-[Unit]
-Description=Kamstrup2mqtt Service
-After=multi-user.target
-
-[Service]
-Type=simple
-WorkingDirectory=/opt/kamstrup
-ExecStart=/usr/bin/python3 /opt/kamstrup/daemon.py
-StandardOutput=null
-StandardError=journal
-Restart=always
-
-[Install]
-WantedBy=multi-user.target
-```
-Check if the service has the required permissions after copying, if not, change it with chmod and chown.
-``` bash
-cp /opt/kamstrup/kamstrup_meter.service /etc/systemd/system/
-sudo systemctl daemon-reload
-sudo systemctl enable kamstrup_meter.service
-sudo service kamstrup_meter start
+[2024-01-15 10:30:15 mqtt_handler.py publish:56 - INFO - Publishing 'kamstrup/values' '{"energy": 227.445, "volume": 2131.935, "temp1": 52.81, "temp2": 39.94}' to 192.168.1.100:1883]
 ```
 
-### Running as a Docker container
-
-#### Requirements
-Make sure the following is installed: 
-* [docker](https://docs.docker.com/get-docker/)
-* [docker-compose**](https://docs.docker.com/compose/)
-
-**Docker-compose is optional but useful and easy to configure.
-
-#### Building the image
-Build a docker image "kamstrup"
-``` bash
-docker build -t kamstrup .
-```
-Edit the docker-compose.yml file and adjust the "devices" parameter accordingly. Syntax is:
-``` bash
-<Path must match usb device --> /dev/ttyKamstrup:/dev/ttyKamstrup <-- Inside container, must match path of config.yml>
+You can monitor the published data using [MQTT Explorer](https://mqtt-explorer.com/) or subscribe to the topic:
+```bash
+mosquitto_sub -h your-mqtt-broker -t "kamstrup/values"
 ```
 
-#### Initial start of container
-Initial start of the container:
-``` bash
-docker-compose up -d
+### 🔄 Systemd Service
+
+For automatic startup and better process management on Linux systems:
+
+1. **Edit the service file:**
+   ```bash
+   sudo cp kamstrup2mqtt.service /etc/systemd/system/
+   sudo nano /etc/systemd/system/kamstrup2mqtt.service
+   ```
+   
+   Update the paths in the service file:
+   ```ini
+   [Unit]
+   Description=Kamstrup2mqtt Service
+   After=multi-user.target
+
+   [Service]
+   Type=simple
+   WorkingDirectory=/opt/kamstrup  # Update this path
+   ExecStart=/usr/bin/python3 /opt/kamstrup/daemon.py  # Update this path
+   StandardOutput=null
+   StandardError=journal
+   Restart=always
+   User=kamstrup  # Optional: run as specific user
+
+   [Install]
+   WantedBy=multi-user.target
+   ```
+
+2. **Enable and start the service:**
+   ```bash
+   sudo systemctl daemon-reload
+   sudo systemctl enable kamstrup2mqtt.service
+   sudo systemctl start kamstrup2mqtt.service
+   ```
+
+3. **Monitor the service:**
+   ```bash
+   sudo systemctl status kamstrup2mqtt.service
+   sudo journalctl -u kamstrup2mqtt.service -f
+   ```
+
+### 🐳 Docker Container
+
+Docker provides an isolated environment and easy deployment.
+
+#### Prerequisites
+- [Docker](https://docs.docker.com/get-docker/)
+- [Docker Compose](https://docs.docker.com/compose/) (recommended)
+
+#### Quick Start with Docker Compose
+
+1. **Edit docker-compose.yml:**
+   ```yaml
+   version: '3.8'
+   services:
+     kamstrup:
+       build: .
+       container_name: kamstrup-mqtt
+       devices:
+         - /dev/ttyUSB0:/dev/ttyUSB0  # Update device path
+       volumes:
+         - ./config.yaml:/opt/kamstrup/config.yaml:ro
+         - ./logs:/opt/kamstrup/logs
+       restart: unless-stopped
+   ```
+
+2. **Start the container:**
+   ```bash
+   docker-compose up -d
+   ```
+
+#### Manual Docker Usage
+
+1. **Build the image:**
+   ```bash
+   docker build -t kamstrup-mqtt .
+   ```
+
+2. **Run the container:**
+   ```bash
+   docker run -d \
+     --name kamstrup-mqtt \
+     --device=/dev/ttyUSB0:/dev/ttyUSB0 \
+     -v $(pwd)/config.yaml:/opt/kamstrup/config.yaml:ro \
+     -v $(pwd)/logs:/opt/kamstrup/logs \
+     --restart unless-stopped \
+     kamstrup-mqtt
+   ```
+
+#### Container Management
+
+```bash
+# View logs
+docker logs -f kamstrup-mqtt
+
+# Stop container
+docker stop kamstrup-mqtt
+
+# Start container
+docker start kamstrup-mqtt
+
+# Restart container
+docker restart kamstrup-mqtt
+
+# Remove container
+docker rm kamstrup-mqtt
 ```
-The container should run now and produce output via Mqtt. If not, check the logging in logs.
 
-#### Container management
-After the initial start of the container it can be stopped and started again with the folowing commands:
-``` bash
-docker start kamstrup_kamstrup_1
-docker stop kamstrup_kamstrup_1
-docker restart kamstrup_kamstrup_1
+## 🔌 Hardware Setup
+
+Proper positioning of the infrared head is crucial for reliable communication.
+
+<img src="images/meter_setup.jpg" alt="Kamstrup meter setup showing IR head placement" width="300"/>
+
+**Setup Tips:**
+- Position the IR head as shown in the image above
+- The optimal position may vary between meter models
+- You might need to position the head slightly higher than the meter's distance guides suggest
+- Ensure the IR head makes good contact with the meter's optical interface
+- Test different positions if you experience communication issues
+
+## 🐛 Troubleshooting
+
+### Check the Logs
+
+The application creates detailed logs in the `logs/` directory:
+
+```bash
+# View current log in real-time
+tail -f logs/debug.log
+
+# View recent errors
+grep ERROR logs/debug.log
+
+# View MQTT publishing activity
+grep "Publishing" logs/debug.log
 ```
-Check if the container is running  with:
-``` bash
-docker stats
+
+### Common Issues
+
+#### 🔄 **Meter Communication Issues**
+
+**Problem:** No response from meter or timeout errors
+
+**Solutions:**
+1. **Wake up the meter** - Press any button on the meter display
+2. **Check IR head positioning** - Try slightly different positions
+3. **Verify serial port** - Ensure correct device path in config
+4. **Check permissions** - User must have access to serial port:
+   ```bash
+   sudo usermod -a -G dialout $USER
+   # Log out and back in
+   ```
+
+#### 📶 **MQTT Connection Issues**
+
+**Problem:** Failed to connect to MQTT broker
+
+**Solutions:**
+1. **Test broker connectivity:**
+   ```bash
+   mosquitto_pub -h your-broker-ip -t test -m "hello"
+   ```
+2. **Check authentication settings** in config.yaml
+3. **Verify network connectivity** and firewall rules
+4. **Check broker logs** for connection attempts
+
+#### 🔍 **Finding the Serial Port**
+
+**Linux:**
+```bash
+# Before plugging in the IR cable
+ls /dev/tty*
+
+# After plugging in the IR cable
+ls /dev/tty*
+# Look for new device, usually /dev/ttyUSB0
+
+# Alternative: check dmesg
+dmesg | grep tty
 ```
 
-## Meter setup
-It can be hard to find the correct position of the meter head. It might differ if you are using an other model. I positioned the infrared head as follows:
+**Windows:**
+- Check Device Manager under "Ports (COM & LPT)"
+- Look for "USB Serial Port" or similar
 
-<img src="images/meter_setup.jpg" alt="meter setup" width="200"/>
+#### ⚙️ **Configuration Validation**
 
-## Troubleshooting
-This section includes some tips to solve some issues.
+**Problem:** Configuration errors or validation failures
 
-### Read the log file
-The log file will, in most cases, spoil what going on if something's not working. 
-``` bash
-tail -f debug.log
-```
-### Reading values
-If you have any troubles with retrieving the values from the meter, make sure that the meter is 'awake', you can do so by pressing any button on the meter. It is also important that you've positioned the meter head correctly. I may take a while to find the sweet spot. For some reason the position for the meter head that I've got is a little bit higher than what the distance keepers on the meter suggest.
+**Solutions:**
+1. **Validate YAML syntax:**
+   ```bash
+   python3 -c "import yaml; yaml.safe_load(open('config.yaml'))"
+   ```
+2. **Check required sections** are present
+3. **Verify parameter names** against the supported list
+4. **Ensure numeric values** are properly formatted
 
-### Finding the correct com port
-Unplug the usb connector from the computer and plug it back in. Use dmesg to find the com port.
-``` bash
-dmesg
-```
+#### 🐳 **Docker Issues**
+
+**Problem:** Container cannot access serial device
+
+**Solutions:**
+1. **Check device mapping** in docker-compose.yml
+2. **Verify device permissions:**
+   ```bash
+   ls -l /dev/ttyUSB0
+   ```
+3. **Run container with privileged mode** (for testing):
+   ```bash
+   docker run --privileged --device=/dev/ttyUSB0 kamstrup-mqtt
+   ```
+
+### Performance Optimization
+
+- **Poll Interval:** Keep under 30 minutes to prevent meter standby
+- **MQTT QoS:** Use QoS 0 for better performance, QoS 1 for reliability
+- **Logging Level:** Set to INFO in production to reduce log size
+
+### Getting Help
+
+1. **Enable debug logging** by setting log level to DEBUG
+2. **Check existing issues** on GitHub
+3. **Provide complete error logs** when reporting issues
+4. **Include configuration** (remove sensitive data like passwords)
+5. **Specify hardware details** (meter model, IR cable, OS)
+
+## 🤝 Contributing
+
+We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for detailed guidelines.
+
+**Quick Start for Contributors:**
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes with proper documentation
+4. Add type hints and docstrings
+5. Test thoroughly
+6. Submit a pull request
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🙏 Acknowledgments
+
+- Original Kamstrup protocol implementation by Poul-Henning Kamp
+- Protocol modifications by Frank Reijn and Paul Bonnemaijers
+- Community contributions for additional meter model support
+
+---
+
+**Need help?** Open an issue on GitHub or check the troubleshooting section above.

@@ -1,3 +1,11 @@
+# Core dependencies
 paho_mqtt==2.0.0
 pyserial==3.5
 PyYAML==6.0.1
+
+# Development dependencies (optional)
+# Install with: pip install -r requirements-dev.txt
+# black==23.0.0
+# flake8==6.0.0
+# mypy==1.0.0
+# isort==5.12.0
