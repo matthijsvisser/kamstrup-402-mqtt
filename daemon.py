@@ -27,6 +27,18 @@ from logging.handlers import TimedRotatingFileHandler
 from kamstrup_meter import Kamstrup
 from mqtt_handler import MqqtHandler
 
+# Configuration defaults
+DEFAULT_POLL_INTERVAL = 28  # minutes
+DEFAULT_QOS = 0
+DEFAULT_MQTT_PORT = 1883
+DEFAULT_SERIAL_TIMEOUT = 2.0
+
+# Validation constants
+MIN_POLL_INTERVAL = 1
+MAX_POLL_INTERVAL_WARNING = 30
+REQUIRED_CONFIG_SECTIONS = ["mqtt", "serial_device", "kamstrup"]
+REQUIRED_MQTT_SETTINGS = ["host", "port", "client", "topic"]
+
 # Configure logging
 log = logging.getLogger("log")
 log.setLevel(logging.DEBUG)
@@ -63,14 +75,12 @@ def load_config() -> Dict[str, Any]:
             cfg = yaml.load(ymlfile, Loader=yaml.SafeLoader)
         
         # Validate required sections
-        required_sections = ["mqtt", "serial_device", "kamstrup"]
-        for section in required_sections:
+        for section in REQUIRED_CONFIG_SECTIONS:
             if section not in cfg:
                 raise ValueError(f"Missing required configuration section: {section}")
         
         # Validate required MQTT settings
-        mqtt_required = ["host", "port", "client", "topic"]
-        for setting in mqtt_required:
+        for setting in REQUIRED_MQTT_SETTINGS:
             if setting not in cfg["mqtt"]:
                 raise ValueError(f"Missing required MQTT setting: {setting}")
         
@@ -121,12 +131,12 @@ class KamstrupDaemon(multiprocessing.Process):
         serial_cfg = cfg["serial_device"]
         kamstrup_cfg = cfg["kamstrup"]
 
-        self.poll_interval = int(kamstrup_cfg.get("poll_interval", 28))
-        if self.poll_interval < 1:
-            raise ValueError("Poll interval must be at least 1 minute")
-        if self.poll_interval >= 30:
+        self.poll_interval = int(kamstrup_cfg.get("poll_interval", DEFAULT_POLL_INTERVAL))
+        if self.poll_interval < MIN_POLL_INTERVAL:
+            raise ValueError(f"Poll interval must be at least {MIN_POLL_INTERVAL} minute")
+        if self.poll_interval >= MAX_POLL_INTERVAL_WARNING:
             log.warning(
-                "Poll interval >= 30 minutes may cause meter to enter standby mode"
+                f"Poll interval >= {MAX_POLL_INTERVAL_WARNING} minutes may cause meter to enter standby mode"
             )
 
         # Set up signal handler for graceful shutdown
@@ -149,11 +159,11 @@ class KamstrupDaemon(multiprocessing.Process):
         if authentication:
             self.mqtt_handler = MqqtHandler(
                 mqtt_cfg["host"],
-                int(mqtt_cfg["port"]),
+                int(mqtt_cfg.get("port", DEFAULT_MQTT_PORT)),
                 mqtt_cfg["client"],
                 mqtt_cfg["topic"],
                 retain,
-                int(mqtt_cfg.get("qos", 0)),
+                int(mqtt_cfg.get("qos", DEFAULT_QOS)),
                 True,
                 mqtt_cfg.get("username", ""),
                 mqtt_cfg.get("password", ""),
@@ -166,11 +176,11 @@ class KamstrupDaemon(multiprocessing.Process):
         else:
             self.mqtt_handler = MqqtHandler(
                 mqtt_cfg["host"],
-                int(mqtt_cfg["port"]),
+                int(mqtt_cfg.get("port", DEFAULT_MQTT_PORT)),
                 mqtt_cfg["client"],
                 mqtt_cfg["topic"],
                 retain,
-                int(mqtt_cfg.get("qos", 0)),
+                int(mqtt_cfg.get("qos", DEFAULT_QOS)),
             )
         
         # Connect to MQTT broker

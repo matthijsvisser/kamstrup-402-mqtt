@@ -186,6 +186,15 @@ class MqqtHandler:
         """
         return f"{self.topic_prefix}/{data}"
 
+    def is_connected(self) -> bool:
+        """
+        Check if the MQTT client is connected.
+        
+        Returns:
+            True if connected, False otherwise
+        """
+        return self.mqtt_client is not None and self.mqtt_client.is_connected()
+
     def loop_start(self) -> None:
         """Start the MQTT client network loop in a separate thread."""
         if self.mqtt_client:

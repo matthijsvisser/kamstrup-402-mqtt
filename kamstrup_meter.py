@@ -133,6 +133,7 @@ class Kamstrup:
         """
         self.serial_port = port
         self.parameters = parameters
+        self._is_connected = False
         self._validate_parameters()
 
         try:
@@ -178,6 +179,7 @@ class Kamstrup:
                     value = self.readparameter(param_code)
                     if value is not None:
                         values[parameter] = value
+                        log.debug(f"Successfully read {parameter}: {value}")
                     else:
                         log.warning(f"Failed to read parameter: {parameter}")
             finally:
@@ -196,16 +198,19 @@ class Kamstrup:
         """
         try:
             self.serial.open()
+            self._is_connected = True
             log.debug("Opened serial port")
             return True
         except (ValueError, Exception) as e:
             log.error(f"Failed to open serial port: {e}")
+            self._is_connected = False
             return False
 
     def close(self) -> None:
         """Close the serial connection to the meter."""
         if self.serial.is_open:
             self.serial.close()
+            self._is_connected = False
             log.debug("Closed serial port")
 
     def _read_byte(self) -> Optional[int]:
