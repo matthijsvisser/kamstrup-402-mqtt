@@ -89,13 +89,25 @@ class kamstrup(object):
 		self.parameters = parameters
 
 		try:
-			self.serial = serial.Serial(
-				port = self.serial_port,
-				baudrate = 1200,
-				parity = serial.PARITY_NONE,
-				stopbits = serial.STOPBITS_TWO,
-				bytesize = serial.EIGHTBITS,
-				timeout = 2.0)
+            if "://" in self.serial_port:
+                # URL-style device (e.g. socket://)
+                self.serial = serial.serial_for_url(
+                    url=self.serial_port,
+                    baudrate = 1200,
+                    parity = serial.PARITY_NONE,
+                    stopbits = serial.STOPBITS_TWO,
+                    bytesize = serial.EIGHTBITS,
+                    timeout = 2.0)
+            else:
+                # Normal device path (e.g. /dev/ttyUSB0)
+                self.serial = serial.Serial(
+                    port=self.serial_port,
+                    baudrate=1200,
+                    parity=serial.PARITY_NONE,
+                    stopbits=serial.STOPBITS_TWO,
+                    bytesize=serial.EIGHTBITS,
+                    timeout=2.0
+                )
 		except serial.SerialException as e:
 			log.exception(e)
 
