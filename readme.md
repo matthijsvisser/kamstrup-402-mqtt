@@ -54,7 +54,7 @@ The library can be configured to fit your needs using the config.yaml file. The 
 | authentication | Set this to true if your MQTT broker requires authentication |
 | username | Username to connect to broker |
 | password | Password to connect to broker | 
-| com_port | port of serial communication device |
+| com_port | Port of serial communication device. Supports both local ports (e.g., `/dev/ttyKamstrup`) and URL-style devices (e.g., `socket://rpi4-ser2net.local:20408`) |
 | parameters | List of parameters that are read and published to the configured MQTT topic. See [Meter parameters](#Kamstrup-meter-parameters) table. |
 | poll_interval | Meter readout interval in minutes (value should be less than 30 to prevent the meter from going in standby mode|
 
